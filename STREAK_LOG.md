@@ -13,3 +13,6 @@ Files committed: hsef_model.py, hsef_helpers.py, hsef_debugger.py, url_feature_e
 ### Day 2 - 2025-12-13
 Files committed: START_WEB_APP.bat, hsef_model.py, hsef_helpers.py, hsef_debugger.py, url_feature_extractor.py
 
+### Day 3 - 2025-12-14
+Files committed: DAILY_COMMIT.bat, gradual_commit.py, hsef_calibration_phase2.py, app.py, simple_app.py
+
