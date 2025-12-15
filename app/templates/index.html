@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSEF - URL Classification System</title>
+    <meta name="description"
+        content="Enterprise URL Security Analysis powered by Heterogeneous Stacking Ensemble Framework">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           CSS VARIABLES - Enterprise Design System
+           ============================================ */
+        :root {
+            /* Colors - Light Mode (Default) */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #f1f3f4;
+
+            --surface: #ffffff;
+            --surface-elevated: #ffffff;
+            --border-color: #e0e0e0;
+            --border-light: #f0f0f0;
+
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --text-muted: #80868b;
+            --text-inverse: #ffffff;
+
+            --accent: #1a73e8;
+            --accent-hover: #1557b0;
+            --accent-light: rgba(26, 115, 232, 0.08);
+
+            /* Semantic Colors - Muted Professional Palette */
+            --status-safe: #34a853;
+            --status-safe-bg: rgba(52, 168, 83, 0.08);
+            --status-danger: #ea4335;
+            --status-danger-bg: rgba(234, 67, 53, 0.08);
+            --status-warning: #fbbc04;
+            --status-warning-bg: rgba(251, 188, 4, 0.08);
+            --status-info: #4285f4;
+            --status-info-bg: rgba(66, 133, 244, 0.08);
+            --status-purple: #9334e6;
+            --status-purple-bg: rgba(147, 52, 230, 0.08);
+
+            /* Spacing Scale */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+
+            /* Typography */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-xs: 11px;
+            --font-sm: 13px;
+            --font-base: 14px;
+            --font-lg: 16px;
+            --font-xl: 20px;
+            --font-2xl: 24px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+
+            /* Transitions */
+            --transition: 150ms ease;
+        }
+
+        /* Dark Mode */
+        [data-theme="dark"] {
+            --bg-primary: #1f1f1f;
+            --bg-secondary: #292929;
+            --bg-tertiary: #333333;
+
+            --surface: #292929;
+            --surface-elevated: #333333;
+            --border-color: #3c3c3c;
+            --border-light: #404040;
+
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-muted: #80868b;
+
+            --accent: #8ab4f8;
+            --accent-hover: #aecbfa;
+            --accent-light: rgba(138, 180, 248, 0.12);
+
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ============================================
+           BASE STYLES
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-base);
+            line-height: 1.5;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-6);
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .app-container {
+                padding: var(--space-4);
+            }
+        }
+
+        /* ============================================
+           HEADER / NAVBAR
+           ============================================ */
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--space-4) var(--space-6);
+            margin-bottom: var(--space-6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo svg {
+            width: 18px;
+            height: 18px;
+            fill: white;
+        }
+
+        .nav-title {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .nav-subtitle {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--status-safe);
+        }
+
+        .status-dot.offline {
+            background: var(--status-danger);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: var(--surface);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--text-muted);
+        }
+
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
+        }
+
+        [data-theme="dark"] .theme-toggle .icon-sun {
+            display: none;
+        }
+
+        [data-theme="light"] .theme-toggle .icon-moon,
+        :root:not([data-theme]) .theme-toggle .icon-moon {
+            display: none;
+        }
+
+        /* ============================================
+           CARDS
+           ============================================ */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            transition: box-shadow var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-5);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-light);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent);
+        }
+
+        .card-title {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        .form-group {
+            margin-bottom: var(--space-4);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            font-family: inherit;
+            font-size: var(--font-base);
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: border-color var(--transition), box-shadow var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--space-8);
+            text-align: center;
+            cursor: pointer;
+            transition: border-color var(--transition), background var(--transition);
+            position: relative;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--accent);
+            background: var(--accent-light);
+        }
+
+        .file-upload-area input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-text {
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+        }
+
+        .file-upload-text strong {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .file-upload-hint {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-2);
+        }
+
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-5);
+            font-family: inherit;
+            font-size: var(--font-base);
+            font-weight: 500;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: var(--accent);
+            color: var(--text-inverse);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--accent-hover);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* ============================================
+           RESULT SECTION
+           ============================================ */
+        .results-section {
+            display: none;
+            margin-top: var(--space-6);
+        }
+
+        .results-section.show {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-url {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-sm);
+            word-break: break-all;
+            margin-bottom: var(--space-5);
+        }
+
+        /* Classification Badge */
+        .classification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: var(--font-lg);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .classification-badge.benign {
+            background: var(--status-safe-bg);
+            color: var(--status-safe);
+        }
+
+        .classification-badge.phishing {
+            background: var(--status-danger-bg);
+            color: var(--status-danger);
+        }
+
+        .classification-badge.malware {
+            background: var(--status-warning-bg);
+            color: #c77700;
+        }
+
+        .classification-badge.defacement {
+            background: var(--status-purple-bg);
+            color: var(--status-purple);
+        }
+
+        .classification-badge.spam {
+            background: var(--status-info-bg);
+            color: var(--status-info);
+        }
+
+        /* Result Grid */
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-5);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .result-classification {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .result-label {
+            font-size: var(--font-xs);
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .confidence-display {
+            text-align: right;
+        }
+
+        .confidence-value {
+            font-size: var(--font-2xl);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .confidence-bar {
+            width: 120px;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: var(--space-2);
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.4s ease-out;
+        }
+
+        /* ============================================
+           DATA GRID
+           ============================================ */
+        .data-section {
+            margin-bottom: var(--space-6);
+        }
+
+        .section-header {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: var(--space-3);
+        }
+
+        .data-tile {
+            background: var(--bg-secondary);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .data-tile-label {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            margin-bottom: var(--space-1);
+        }
+
+        .data-tile-value {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Probability Bars */
+        .probability-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .probability-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        .probability-label {
+            width: 90px;
+            font-size: var(--font-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .probability-bar-track {
+            flex: 1;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .probability-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s ease-out;
+        }
+
+        .probability-bar-fill.benign {
+            background: var(--status-safe);
+        }
+
+        .probability-bar-fill.phishing {
+            background: var(--status-danger);
+        }
+
+        .probability-bar-fill.malware {
+            background: var(--status-warning);
+        }
+
+        .probability-bar-fill.defacement {
+            background: var(--status-purple);
+        }
+
+        .probability-bar-fill.spam {
+            background: var(--status-info);
+        }
+
+        .probability-value {
+            width: 50px;
+            font-size: var(--font-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+
+        /* ============================================
+           EXPANDABLE SECTIONS
+           ============================================ */
+        .expandable {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-3);
+            overflow: hidden;
+        }
+
+        .expandable-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+
+        .expandable-header:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .expandable-title {
+            font-size: var(--font-sm);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .expandable-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-muted);
+            transition: transform var(--transition);
+        }
+
+        .expandable.open .expandable-icon {
+            transform: rotate(180deg);
+        }
+
+        .expandable-content {
+            display: none;
+            padding: var(--space-4);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .expandable.open .expandable-content {
+            display: block;
+        }
+
+        /* Model Cards */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-3);
+        }
+
+        @media (max-width: 640px) {
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .model-card {
+            background: var(--bg-secondary);
+            padding: var(--space-4);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .model-name {
+            font-size: var(--font-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .model-prediction {
+            font-size: var(--font-base);
+            font-weight: 500;
+            color: var(--accent);
+        }
+
+        .model-confidence {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-1);
+        }
+
+        /* ============================================
+           MODEL INFO FOOTER
+           ============================================ */
+        .model-info {
+            margin-top: var(--space-6);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .info-item {
+            text-align: center;
+            padding: var(--space-4);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+
+        .info-label {
+            font-size: var(--font-xs);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--space-1);
+        }
+
+        .info-value {
+            font-size: var(--font-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           LOADING STATE
+           ============================================ */
+        .loading-overlay {
+            display: none;
+            padding: var(--space-8);
+            text-align: center;
+        }
+
+        .loading-overlay.show {
+            display: block;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto var(--space-4);
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            font-size: var(--font-sm);
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           ERROR STATE
+           ============================================ */
+        .error-message {
+            display: none;
+            padding: var(--space-3) var(--space-4);
+            background: var(--status-danger-bg);
+            border: 1px solid rgba(234, 67, 53, 0.2);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-4);
+            font-size: var(--font-sm);
+            color: var(--status-danger);
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* ============================================
+           TOAST NOTIFICATIONS
+           ============================================ */
+        .toast-container {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-6);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4) var(--space-5);
+            background: var(--surface-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: var(--font-sm);
+            animation: slideUp 0.2s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast-success {
+            border-left: 3px solid var(--status-safe);
+        }
+
+        .toast-error {
+            border-left: 3px solid var(--status-danger);
+        }
+
+        /* ============================================
+           BATCH RESULTS
+           ============================================ */
+        .batch-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .batch-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .batch-item:last-child {
+            border-bottom: none;
+        }
+
+        .batch-url {
+            flex: 1;
+            font-family: monospace;
+            font-size: var(--font-sm);
+            color: var(--text-secondary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: var(--space-4);
+        }
+
+        .batch-badge {
+            font-size: var(--font-xs);
+            font-weight: 600;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+        }
+
+        .batch-badge.benign {
+            background: var(--status-safe-bg);
+            color: var(--status-safe);
+        }
+
+        .batch-badge.phishing {
+            background: var(--status-danger-bg);
+            color: var(--status-danger);
+        }
+
+        .batch-badge.malware {
+            background: var(--status-warning-bg);
+            color: #c77700;
+        }
+
+        .batch-badge.defacement {
+            background: var(--status-purple-bg);
+            color: var(--status-purple);
+        }
+
+        .batch-badge.spam {
+            background: var(--status-info-bg);
+            color: var(--status-info);
+        }
+
+        /* ============================================
+           ACCESSIBILITY
+           ============================================ */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar" role="banner">
+        <div class="nav-brand">
+            <div class="nav-logo">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4c1.4 0 2.8 1.1 2.8 2.5V9c.6 0 1.2.6 1.2 1.2v3.5c0 .7-.5 1.3-1.2 1.3h-5.5c-.7 0-1.3-.6-1.3-1.2v-3.5c0-.7.6-1.3 1.2-1.3V7.5C9.2 6.1 10.6 5 12 5zm0 1.2c-.8 0-1.5.5-1.5 1.3V9h3V7.5c0-.8-.7-1.3-1.5-1.3z" />
+                </svg>
+            </div>
+            <div>
+                <div class="nav-title">HSEF URL Classifier</div>
+                <div class="nav-subtitle">Security Analysis</div>
+            </div>
+        </div>
+        <div class="nav-actions">
+            <div class="status-indicator" role="status" aria-label="System status">
+                <span class="status-dot {% if model_loaded %}{% else %}offline{% endif %}"></span>
+                <span>{% if model_loaded %}System Ready{% else %}Offline{% endif %}</span>
+            </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle dark mode">
+                <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 00-1.41 0 .996.996 0 000 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 000-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 000-1.41.996.996 0 00-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z" />
+                </svg>
+                <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                        d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <!-- Input Section -->
+        <section class="grid-2" aria-label="URL Analysis">
+            <!-- Single URL Analysis -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="card-title">URL Analysis</h2>
+                        <p class="card-description">Analyze a single URL for threats</p>
+                    </div>
+                </div>
+
+                <div class="error-message" id="singleError" role="alert"></div>
+
+                <div class="form-group">
+                    <label class="form-label" for="urlInput">Enter URL</label>
+                    <input type="text" id="urlInput" class="form-input" placeholder="https://example.com"
+                        aria-describedby="urlHelp" {% if not model_loaded %}disabled{% endif %}>
+                </div>
+
+                <button class="btn btn-primary" id="predictBtn" onclick="predictSingle()" {% if not model_loaded
+                    %}disabled{% endif %}>
+                    Analyze URL
+                </button>
+            </div>
+
+            <!-- Batch Analysis -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="card-title">Batch Analysis</h2>
+                        <p class="card-description">Upload CSV file with multiple URLs</p>
+                    </div>
+                </div>
+
+                <div class="error-message" id="batchError" role="alert"></div>
+
+                <div class="form-group">
+                    <div class="file-upload-area" tabindex="0">
+                        <input type="file" id="fileInput" accept=".csv" aria-label="Upload CSV file" {% if not
+                            model_loaded %}disabled{% endif %}>
+                        <div class="file-upload-text">
+                            <strong>Click to upload</strong> or drag and drop
+                        </div>
+                        <div class="file-upload-hint">CSV files only</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" id="batchBtn" onclick="predictBatch()" {% if not model_loaded
+                    %}disabled{% endif %}>
+                    Analyze Batch
+                </button>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div class="loading-overlay card" id="loadingState">
+            <div class="spinner"></div>
+            <div class="loading-text">Analyzing URL...</div>
+        </div>
+
+        <!-- Single Result -->
+        <section class="results-section card" id="singleResult" aria-label="Analysis Results">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="card-title">Analysis Result</h2>
+                </div>
+            </div>
+
+            <div class="result-url" id="resultUrl"></div>
+
+            <div class="result-header">
+                <div class="result-classification">
+                    <span class="result-label">Classification</span>
+                    <div class="classification-badge" id="classificationBadge"></div>
+                </div>
+                <div class="confidence-display">
+                    <span class="result-label">Confidence</span>
+                    <div class="confidence-value" id="confidenceValue"></div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" id="confidenceFill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature Summary -->
+            <div class="data-section" id="featureSection">
+                <div class="section-header">Feature Analysis</div>
+                <div class="data-grid" id="featureGrid"></div>
+            </div>
+
+            <!-- Probabilities -->
+            <div class="data-section">
+                <div class="section-header">Class Probabilities</div>
+                <div class="probability-list" id="probabilityList"></div>
+            </div>
+
+            <!-- Expandable Sections -->
+            <div class="expandable" id="baseModelsPanel">
+                <div class="expandable-header" onclick="togglePanel('baseModelsPanel')" role="button" tabindex="0">
+                    <span class="expandable-title">Base Model Predictions</span>
+                    <svg class="expandable-icon" viewBox="0 0 24 24">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                    </svg>
+                </div>
+                <div class="expandable-content">
+                    <div class="model-grid" id="baseModelsGrid"></div>
+                </div>
+            </div>
+
+            <div class="expandable" id="metaLayerPanel">
+                <div class="expandable-header" onclick="togglePanel('metaLayerPanel')" role="button" tabindex="0">
+                    <span class="expandable-title">Meta-Layer Weights</span>
+                    <svg class="expandable-icon" viewBox="0 0 24 24">
+                        <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+                    </svg>
+                </div>
+                <div class="expandable-content">
+                    <div class="model-grid" id="metaLayerGrid"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Batch Results -->
+        <section class="results-section card" id="batchResult" aria-label="Batch Results">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="card-title">Batch Results</h2>
+                    <p class="card-description" id="batchCount"></p>
+                </div>
+            </div>
+            <div class="batch-results" id="batchResultsList"></div>
+        </section>
+
+        <!-- Model Info -->
+        {% if model_info %}
+        <section class="model-info card" aria-label="Model Information">
+            <div class="card-header">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="card-title">Model Information</h2>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Framework</div>
+                    <div class="info-value">HSEF</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Base Models</div>
+                    <div class="info-value">RF + XGB + SVM</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Classes</div>
+                    <div class="info-value">5</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Features</div>
+                    <div class="info-value">80</div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <script>
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+
+        // Initialize theme
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 200);
+            }, 3000);
+        }
+
+        // Expandable panels
+        function togglePanel(id) {
+            document.getElementById(id).classList.toggle('open');
+        }
+
+        // Single URL prediction
+        async function predictSingle() {
+            const url = document.getElementById('urlInput').value.trim();
+            const errorDiv = document.getElementById('singleError');
+            const loadingDiv = document.getElementById('loadingState');
+            const resultDiv = document.getElementById('singleResult');
+            const btn = document.getElementById('predictBtn');
+
+            errorDiv.classList.remove('show');
+            resultDiv.classList.remove('show');
+
+            if (!url) {
+                errorDiv.textContent = 'Please enter a URL';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            loadingDiv.classList.add('show');
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResult(data);
+                    showToast('Analysis complete');
+                } else {
+                    errorDiv.textContent = data.error || 'Analysis failed';
+                    errorDiv.classList.add('show');
+                    showToast('Analysis failed', 'error');
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+                showToast('Error: ' + error.message, 'error');
+            } finally {
+                loadingDiv.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function displayResult(data) {
+            const resultDiv = document.getElementById('singleResult');
+
+            // URL
+            document.getElementById('resultUrl').textContent = data.url || '';
+
+            // Classification
+            const prediction = (data.prediction || '').toLowerCase();
+            const badge = document.getElementById('classificationBadge');
+            badge.className = 'classification-badge ' + prediction;
+            badge.textContent = data.prediction || 'Unknown';
+
+            // Confidence
+            const confidence = data.confidence ? (data.confidence * 100).toFixed(1) : '0';
+            document.getElementById('confidenceValue').textContent = confidence + '%';
+            document.getElementById('confidenceFill').style.width = confidence + '%';
+
+            // Features
+            if (data.feature_summary) {
+                const grid = document.getElementById('featureGrid');
+                grid.innerHTML = '';
+                const features = [
+                    { label: 'URL Length', value: data.feature_summary.url_length },
+                    { label: 'Domain', value: data.feature_summary.domain_length },
+                    { label: 'Dots', value: data.feature_summary.number_of_dots },
+                    { label: 'Entropy', value: data.feature_summary.entropy_url?.toFixed(2) || '-' },
+                    { label: 'Has IP', value: data.feature_summary.has_ip_address ? 'Yes' : 'No' },
+                    { label: 'Executable', value: data.feature_summary.is_executable ? 'Yes' : 'No' }
+                ];
+                features.forEach(f => {
+                    grid.innerHTML += `<div class="data-tile"><div class="data-tile-label">${f.label}</div><div class="data-tile-value">${f.value}</div></div>`;
+                });
+            }
+
+            // Probabilities
+            const probList = document.getElementById('probabilityList');
+            probList.innerHTML = '';
+            if (data.probabilities) {
+                Object.entries(data.probabilities).forEach(([name, prob]) => {
+                    const pct = (prob * 100).toFixed(1);
+                    probList.innerHTML += `
+                        <div class="probability-item">
+                            <span class="probability-label">${name}</span>
+                            <div class="probability-bar-track">
+                                <div class="probability-bar-fill ${name.toLowerCase()}" style="width: ${pct}%"></div>
+                            </div>
+                            <span class="probability-value">${pct}%</span>
+                        </div>
+                    `;
+                });
+            }
+
+            // Base models
+            if (data.base_models) {
+                const grid = document.getElementById('baseModelsGrid');
+                grid.innerHTML = '';
+                Object.entries(data.base_models).forEach(([name, model]) => {
+                    grid.innerHTML += `
+                        <div class="model-card">
+                            <div class="model-name">${name}</div>
+                            <div class="model-prediction">${model.prediction}</div>
+                            <div class="model-confidence">${(model.confidence * 100).toFixed(1)}%</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('baseModelsPanel').style.display = 'block';
+            }
+
+            // Meta layer
+            if (data.meta_layer_analysis) {
+                const grid = document.getElementById('metaLayerGrid');
+                grid.innerHTML = '';
+                Object.entries(data.meta_layer_analysis).forEach(([name, w]) => {
+                    grid.innerHTML += `
+                        <div class="model-card">
+                            <div class="model-name">${name}</div>
+                            <div class="model-prediction">${w.percentage.toFixed(1)}%</div>
+                            <div class="model-confidence">Weight</div>
+                        </div>
+                    `;
+                });
+                document.getElementById('metaLayerPanel').style.display = 'block';
+            }
+
+            resultDiv.classList.add('show');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Batch prediction
+        async function predictBatch() {
+            const fileInput = document.getElementById('fileInput');
+            const errorDiv = document.getElementById('batchError');
+            const loadingDiv = document.getElementById('loadingState');
+            const resultDiv = document.getElementById('batchResult');
+            const btn = document.getElementById('batchBtn');
+
+            errorDiv.classList.remove('show');
+            resultDiv.classList.remove('show');
+
+            if (!fileInput.files.length) {
+                errorDiv.textContent = 'Please select a CSV file';
+                errorDiv.classList.add('show');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            loadingDiv.classList.add('show');
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/predict_batch', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayBatchResults(data);
+                    showToast(`Analyzed ${data.results?.length || 0} URLs`);
+                } else {
+                    errorDiv.textContent = data.error || 'Batch analysis failed';
+                    errorDiv.classList.add('show');
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+            } finally {
+                loadingDiv.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function displayBatchResults(data) {
+            document.getElementById('batchCount').textContent = `${data.results?.length || 0} URLs analyzed`;
+            const list = document.getElementById('batchResultsList');
+            list.innerHTML = '';
+
+            if (data.results) {
+                data.results.forEach(r => {
+                    const pred = r.prediction.toLowerCase();
+                    list.innerHTML += `
+                        <div class="batch-item">
+                            <span class="batch-url">${r.url}</span>
+                            <span class="batch-badge ${pred}">${r.prediction}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('batchResult').classList.add('show');
+        }
+
+        // Keyboard support
+        document.getElementById('urlInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') predictSingle();
+        });
+
+        document.querySelectorAll('.expandable-header').forEach(h => {
+            h.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    h.click();
+                }
+            });
+        });
+
+        document.querySelector('.file-upload-area').addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                document.getElementById('fileInput').click();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -16,3 +16,6 @@ Files committed: START_WEB_APP.bat, hsef_model.py, hsef_helpers.py, hsef_debugge
 ### Day 3 - 2025-12-14
 Files committed: DAILY_COMMIT.bat, gradual_commit.py, hsef_calibration_phase2.py, app.py, simple_app.py
 
+### Day 4 - 2025-12-15
+Files committed: demo_app.py, mock_app.py, index.html, start_server.py, start_enhanced_server.py
+
