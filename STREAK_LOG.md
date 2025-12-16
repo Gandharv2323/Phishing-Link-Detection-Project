@@ -22,3 +22,6 @@ Files committed: demo_app.py, mock_app.py, index.html, start_server.py, start_en
 ### Day 5 - 2025-12-15
 Files committed: prepare_deployment.py, quick_setup.py, save_model.py, load_model.py, run_calibration_auto.py
 
+### Day 6 - 2025-12-16
+Files committed: run_calibration_fast.py, run_calibration_minimal.py, run_full_calibration.py, calibrate_simple.py, test_api.py
+
