@@ -1,0 +1,11 @@
+url,label
+https://www.youtube.com/,benign
+https://www.google.com/,benign
+https://github.com/,benign
+http://example.com/,benign
+http://verify-account-login.tk/update.exe,phishing
+http://192.168.1.1/admin/login.php,suspicious
+https://secure-banking-update.com/confirm-account.html,phishing
+http://malware-download.xyz/virus.exe,malware
+https://legitimate-site.com/,benign
+http://spam-ads.tk/click-here.html,spam

@@ -28,3 +28,6 @@ Files committed: run_calibration_fast.py, run_calibration_minimal.py, run_full_c
 ### Day 7 - 2025-12-16
 Files committed: test_calibration_system.py, test_enhanced_app.py, test_existing_model.py, test_feature_extraction.py, test_gpu.py
 
+### Day 8 - 2025-12-17
+Files committed: quick_test.py, test_batch.csv, debug_test_batch.csv, test_urls.csv, sample_features.json
+
