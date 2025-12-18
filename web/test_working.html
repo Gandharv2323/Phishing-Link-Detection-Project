@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HSEF - Direct Test</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .success { color: green; font-weight: bold; }
+        input { width: 100%; padding: 10px; margin: 10px 0; }
+        button { padding: 10px 20px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        #result { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>HSEF URL Classifier - WORKING VERSION</h1>
+    <p class="success">✓ Model Loaded (Demo Mode)</p>
+    
+    <h3>Test URL Classification:</h3>
+    <input type="text" id="urlInput" placeholder="Enter URL (e.g., https://www.youtube.com)" value="https://www.youtube.com">
+    <button onclick="classifyURL()">Classify URL</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function classifyURL() {
+            const url = document.getElementById('urlInput').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>⏳ Classifying...</p>';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    resultDiv.innerHTML = `<p style="color:red">❌ Error: ${data.error}</p>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h3>✓ Classification Result:</h3>
+                        <p><strong>URL:</strong> ${data.url}</p>
+                        <p><strong>Prediction:</strong> <span style="color: ${data.prediction === 'benign' ? 'green' : 'red'}; font-weight: bold;">${data.prediction.toUpperCase()}</span></p>
+                        <p><strong>Confidence:</strong> ${(data.confidence * 100).toFixed(2)}%</p>
+                        <p><strong>URL Length:</strong> ${data.feature_summary.url_length}</p>
+                        <p><strong>Warnings:</strong> ${data.warnings.join(', ')}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color:red">❌ Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
