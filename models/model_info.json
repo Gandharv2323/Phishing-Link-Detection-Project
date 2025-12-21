@@ -1,0 +1,22 @@
+{
+  "model_type": "HSEF - Heterogeneous Stacking Ensemble Framework",
+  "base_learners": [
+    "Random Forest",
+    "XGBoost",
+    "SVM"
+  ],
+  "meta_learner": "Logistic Regression",
+  "n_features": 79,
+  "n_classes": 5,
+  "classes": [
+    "Defacement",
+    "benign",
+    "malware",
+    "phishing",
+    "spam"
+  ],
+  "gpu_enabled": true,
+  "fast_mode": true,
+  "test_accuracy": 0.9846090983383274,
+  "timestamp": "2025-12-18T10:55:03.880413"
+}
