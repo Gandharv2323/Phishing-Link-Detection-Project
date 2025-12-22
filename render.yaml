@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: hsef-phishing-detection
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --chdir app app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: MODELS_DIR
+        value: /opt/render/project/src/models
