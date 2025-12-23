@@ -28,8 +28,10 @@ feature_extractor = None
 shap_explainer = None
 base_models = None
 
-# Model directory
-MODEL_DIR = Path('models')
+# Model directory - works from both root and app/ folder
+MODEL_DIR = Path(__file__).parent.parent / 'models'
+if not MODEL_DIR.exists():
+    MODEL_DIR = Path('models')
 MODEL_DIR.mkdir(exist_ok=True)
 
 # Trusted domains whitelist (known benign sites)
