@@ -547,13 +547,19 @@ def api_health():
     })
 
 
+# Load model at module import time (for Gunicorn/production)
+logger.info("=== APPLICATION STARTING ===")
+model_loaded, model_message = load_model()
+logger.info(f"Model loading result: {model_loaded}, Message: {model_message}")
+sys.stdout.flush()
+
+
 if __name__ == '__main__':
-    # Try to load model on startup
-    success, message = load_model()
-    if success:
-        print(f"✓ {message}")
+    # Also log when running directly
+    if model_loaded:
+        print(f"✓ {model_message}")
     else:
-        print(f"⚠ {message}")
+        print(f"⚠ {model_message}")
         print("  You can train and save the model, then restart the app.")
     
     # Run the app
