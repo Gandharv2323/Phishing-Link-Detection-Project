@@ -8,12 +8,22 @@ import numpy as np
 import pandas as pd
 import joblib
 import os
+import sys
+import logging
 from pathlib import Path
 import json
 from datetime import datetime
 import shap
 from url_feature_extractor import URLFeatureExtractor
 import tldextract
+
+# Configure logging for Gunicorn/Render
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -48,8 +58,12 @@ def load_model():
     """Load the trained HSEF model and preprocessing objects"""
     global model, scaler, feature_names, class_names, model_info, feature_extractor, shap_explainer, base_models
     
-    print(f"[STARTUP] Model directory: {MODEL_DIR}")
-    print(f"[STARTUP] Model directory exists: {MODEL_DIR.exists()}")
+    logger.info(f"=== MODEL LOADING STARTED ===")
+    logger.info(f"Model directory: {MODEL_DIR}")
+    logger.info(f"Model directory absolute: {MODEL_DIR.resolve()}")
+    logger.info(f"Model directory exists: {MODEL_DIR.exists()}")
+    logger.info(f"Current working directory: {os.getcwd()}")
+    sys.stdout.flush()
     
     try:
         model_path = MODEL_DIR / 'hsef_model.pkl'
@@ -57,26 +71,31 @@ def load_model():
         features_path = MODEL_DIR / 'feature_names.json'
         info_path = MODEL_DIR / 'model_info.json'
         
-        print(f"[STARTUP] Looking for model at: {model_path}")
-        print(f"[STARTUP] Model file exists: {model_path.exists()}")
+        logger.info(f"Looking for model at: {model_path}")
+        logger.info(f"Model file exists: {model_path.exists()}")
+        sys.stdout.flush()
         
         if not model_path.exists():
-            print(f"[ERROR] Model file not found at {model_path}")
+            logger.error(f"Model file not found at {model_path}")
+            # List what's in the models directory
+            if MODEL_DIR.exists():
+                logger.info(f"Files in {MODEL_DIR}: {list(MODEL_DIR.iterdir())}")
             return False, f"Model file not found at {model_path}"
         
-        print("[STARTUP] Loading model...")
+        logger.info("Loading model...")
+        sys.stdout.flush()
         model = joblib.load(model_path)
-        print("[STARTUP] Model loaded successfully!")
+        logger.info("Model loaded successfully!")
         
         scaler = joblib.load(scaler_path) if scaler_path.exists() else None
-        print(f"[STARTUP] Scaler loaded: {scaler is not None}")
+        logger.info(f"Scaler loaded: {scaler is not None}")
         
         if features_path.exists():
             with open(features_path, 'r') as f:
                 data = json.load(f)
                 feature_names = data['features']
                 class_names = data['classes']
-            print(f"[STARTUP] Features loaded: {len(feature_names)} features, {len(class_names)} classes")
+            logger.info(f"Features loaded: {len(feature_names)} features, {len(class_names)} classes")
         
         if info_path.exists():
             with open(info_path, 'r') as f:
@@ -84,7 +103,7 @@ def load_model():
         
         # Initialize feature extractor
         feature_extractor = URLFeatureExtractor()
-        print("[STARTUP] Feature extractor initialized")
+        logger.info("Feature extractor initialized")
         
         # Extract base models from the stacking classifier
         try:
@@ -94,24 +113,26 @@ def load_model():
                     'XGBoost': model.estimators_[1],
                     'SVM': model.estimators_[2]
                 }
-                print("[STARTUP] Base models extracted")
+                logger.info("Base models extracted")
             else:
                 base_models = None
         except Exception as e:
-            print(f"[WARNING] Could not extract base models: {e}")
+            logger.warning(f"Could not extract base models: {e}")
             base_models = None
         
         # Skip SHAP on production to save memory (512MB limit on free tier)
         shap_explainer = None
-        print("[STARTUP] SHAP explainer skipped (production mode)")
+        logger.info("SHAP explainer skipped (production mode)")
         
-        print("[STARTUP] Model loading complete!")
+        logger.info("=== MODEL LOADING COMPLETE ===")
+        sys.stdout.flush()
         return True, "Model loaded successfully"
         
     except Exception as e:
         import traceback
-        print(f"[ERROR] Model loading failed: {str(e)}")
-        print(traceback.format_exc())
+        logger.error(f"Model loading failed: {str(e)}")
+        logger.error(traceback.format_exc())
+        sys.stdout.flush()
         return False, f"Error loading model: {str(e)}"
 
 
