@@ -27,13 +27,13 @@ env/
 # =====================================
 # Large Model Files (Important!)
 # =====================================
-models/*.pkl
-models/*.joblib
-models/*.h5
-models/*.pt
-models/*.pth
-*.pkl
-*.joblib
+# Ignore very large model files (>100MB)
+models/hsef_model.pkl
+# But allow smaller deployment-ready models
+!models/hsef_model_compressed.pkl
+!models/hsef_scaler.pkl
+!models/feature_names.json
+!models/model_info.json
 
 # =====================================
 # Large Dataset Files (Important!)

@@ -66,7 +66,11 @@ def load_model():
     sys.stdout.flush()
     
     try:
+        # Try main model first, then compressed version for cloud deployment
         model_path = MODEL_DIR / 'hsef_model.pkl'
+        if not model_path.exists():
+            model_path = MODEL_DIR / 'hsef_model_compressed.pkl'
+        
         scaler_path = MODEL_DIR / 'hsef_scaler.pkl'
         features_path = MODEL_DIR / 'feature_names.json'
         info_path = MODEL_DIR / 'model_info.json'
