@@ -5,8 +5,15 @@
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Research-orange)
+[![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7)](https://phishing-link-detection-project.onrender.com)
 
 ---
+
+## 🌐 Live Demo
+
+**Try the deployed app:** [https://phishing-link-detection-project.onrender.com](https://phishing-link-detection-project.onrender.com)
+
+Analyze any URL in real-time to detect phishing, malware, spam, or defacement threats with 98%+ accuracy.
 
 ## 📋 Overview
 
